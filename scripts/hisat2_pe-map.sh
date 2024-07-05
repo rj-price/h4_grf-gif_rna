@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 #SBATCH -J hisat2
-#SBATCH --partition=long
+#SBATCH --partition=medium
 #SBATCH --mem=14G
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=8
 
-# index_dir = $1
-# F reads = $2
-# R reads = $3
+IndexDir=$1
+F_reads=$2
+R_reads=$3
 
 export MYCONDAPATH=/mnt/shared/scratch/jnprice/apps/conda
 source ${MYCONDAPATH}/bin/activate rna-seq
 
-fileshort=$(basename $2 _F_paired.fastq.gz)
+Prefix=$(basename $F_reads _F_paired.fastq.gz)
 
-hisat2 -p 16 -x $1 -1 $2 -2 $3 -S "$fileshort".sam --summary-file "$fileshort".summary
+hisat2 -p 16 -x $IndexDir -1 $F_reads -2 $R_reads -S "$Prefix".sam --summary-file "$Prefix".summary
 
-samtools sort -@ 16 -o "$fileshort".sorted.bam "$fileshort".sam
+samtools sort -@ 16 -o "$Prefix".sorted.bam "$Prefix".sam
 
-rm "$fileshort".sam
+rm "$Prefix".sam

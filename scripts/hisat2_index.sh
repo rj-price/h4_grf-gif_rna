@@ -4,13 +4,13 @@
 #SBATCH --mem=2G
 #SBATCH --cpus-per-task=2
 
-# genome = $1
-# out dir = $2
+Genome=$1
+OutDir=$2
 
 export MYCONDAPATH=/mnt/shared/scratch/jnprice/apps/conda
 source ${MYCONDAPATH}/bin/activate rna-seq
 
-fileshort=$(basename $1 .fasta)
+Prefix=$(basename $Genome .fasta)
 
-hisat2-build $1 $2/$fileshort
+hisat2-build $Genome $OutDir/$Prefix
 

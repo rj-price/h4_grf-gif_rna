@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 #SBATCH -J trimmomatic
-#SBATCH --partition=long
+#SBATCH --partition=medium
 #SBATCH --mem=1G
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 
-# F reads = $1 
-# R reads = $2
+F_reads=$1 
+R_reads=$2
 
-ln -s $1
-ln -s $2
+ln -s $F_reads
+ln -s $R_reads
 
-file1=$(basename $1)
-file2=$(basename $2)
-fileshort=$(basename $1 | sed s/_1.fq.gz//g)
+F_symlink=$(basename $F_reads)
+R_symlink=$(basename $R_reads)
+Prefix=$(basename $F_reads _1.fq.gz)
 
-trimmomatic PE -threads 8 -phred33 $file1 $file2 \
-    "$fileshort"_F_paired.fastq.gz \
-    "$fileshort"_F_unpaired.fastq.gz \
-    "$fileshort"_R_paired.fastq.gz \
-    "$fileshort"_R_unpaired.fastq.gz \
+trimmomatic PE -threads 8 -phred33 $F_symlink $R_symlink \
+    "$Prefix"_F_paired.fastq.gz \
+    "$Prefix"_F_unpaired.fastq.gz \
+    "$Prefix"_R_paired.fastq.gz \
+    "$Prefix"_R_unpaired.fastq.gz \
     ILLUMINACLIP:TruSeq3-PE.fa:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 HEADCROP:10 MINLEN:100
