@@ -10,7 +10,7 @@
 export MYCONDAPATH=/mnt/shared/scratch/jnprice/apps/conda
 source ${MYCONDAPATH}/bin/activate rna-seq
 
-fileshort=$(basename $1 | sed s/".fasta"//g)
+fileshort=$(basename $1 .fasta)
 
 hisat2-build $1 $2/$fileshort
 
