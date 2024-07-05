@@ -11,7 +11,7 @@
 export MYCONDAPATH=/mnt/shared/scratch/jnprice/apps/conda
 source ${MYCONDAPATH}/bin/activate rna-seq
 
-fileshort=$(basename $2 | sed s/"_F_paired.fastq.gz"//g)
+fileshort=$(basename $2 _F_paired.fastq.gz)
 
 hisat2 -p 16 -x $1 -1 $2 -2 $3 -S "$fileshort".sam --summary-file "$fileshort".summary
 
