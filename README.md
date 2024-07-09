@@ -1,5 +1,5 @@
-# H4 GRF-GIF RNA-seq Analysis
-Analysis of RNA-seq data from F. vesca Hawaii 4 GRF-GIF transformations.
+# H4 GRF-GIF Transcriptomic Analysis
+Documentation for the analysis of RNA-seq data from *Fragaria vesca* Hawaii 4 GRF-GIF transformations using the v4.0.a2 reference genome on [GDR](https://www.rosaceae.org/).
 
 ## Key
 <table>
@@ -12,36 +12,71 @@ Analysis of RNA-seq data from F. vesca Hawaii 4 GRF-GIF transformations.
 </table>
 
 ## Quality Control
-FastQC
-```
+Check quality of reads using FastQC.
+```bash
 for file in *.fq.gz; 
     do sbatch ../scripts/fastqc.sh $file
     done
 ```
-Trimmomatic (ILLUMINACLIP, HEADCROP:10, SLIDINGWINDOW:4:20, MINLEN:140)
-```
-for file in ../raw/*_1.fq.gz; 
-    do file2=$(ls $file | sed s/"_1.fq.gz"//g)
-    sbatch ../scripts/trimmomatic_pe.sh $file "$file2"_2.fq.gz
+Remove adapters and low quality sequence using Trimmomatic (ILLUMINACLIP, HEADCROP:10, SLIDINGWINDOW:4:20, MINLEN:100).
+```bash
+for file1 in ../raw/*_1.fq.gz; 
+    do file2=$(ls $file1 | sed s/"_1.fq.gz"/"_2.fq.gz"/g)
+    sbatch ../scripts/trimmomatic_pe.sh $file1 $file2
     done
 ```
 ## Align reads and quantify
-Index genome
-```
-sbatch hisat2_index Fragaria_vesca_v4.0.a1.fasta genome_index/
+Index genome using HISAT2 prior to alignment.
+```bash
+sbatch scripts/hisat2_index.sh Fragaria_vesca_v4.0.a1.fasta genome_index/
 ```
 
-Align reads
-```
-for file in ../trimmed/*F_paired.fastq.gz; 
-    do file2=$(ls $file | sed s/"F_paired.fastq.gz"//g)
-    sbatch ../scripts/hisat2_pe-map.sh ../genome_index/Fragaria_vesca_v4.0.a1 $file "$file2"R_paired.fastq.gz
+Align all reads to the *F. vesca* genome using HISAT2.
+```bash
+for file1 in ../trimmed/*F_paired.fastq.gz; 
+    do file2=$(ls $file1 | sed s/"F_paired"/"R_paired"/g)
+    sbatch ../scripts/hisat2_pe-map.sh ../genome_index/Fragaria_vesca_v4.0.a1 $file1 $file2
     done
 ```
 
-Count
-```
+Generate count data for each sample using FeatureCounts.
+```bash
 for file in ../mapping/*bam;
-    do sbatch featurecounts.sh $file ../Fragaria_vesca_v4.0.a2.genes.gff3
+    do sbatch ../scripts/featurecounts.sh $file ../Fragaria_vesca_v4.0.a2.genes.gff3
     done
 ```
+
+## Differential expression testing and plotting
+Perform differential expression analysis using DESeq2 in RStudio.
+```
+DESeq2.R
+```
+
+Plot Venn diagram of shared DEGs using ggvenn in RStudio.
+```
+venn_diagram.R
+```
+
+Plot heatmap of the log2FC expression and hierarchical clustering of shared DEGs using seaborn in Jupyter Notebook. 
+```
+Shared DEGs Heatmap.ipynb
+```
+
+TPM normalise counts using bioinfokit and plot values for transgenes using seaborn in Jupyter Notebook.
+```
+GRF-GIF Count Plots.ipynb
+```
+
+## Functional Annotation
+Assign functional annotations to determine function of DEGs.
+```bash
+sbatch ../scripts/interproscan.sh ../Fragaria_vesca_v4.0.a2.proteins.fa
+```
+
+## Citation
+
+Esther Rosales Sanchez, **R. Jordan Price**, Federico Marangelli et al. Overexpression of Vitis GRF4-GIF1 improves regeneration efficiency in diploid *Fragaria vesca* Hawaii 4, 02 July 2024, [Preprint available at Research Square](https://doi.org/10.21203/rs.3.rs-4583627/v1)
+
+<br>
+
+<center><img src="./img/Figure_4.jpg" alt="Transcriptmic analysis figure" width="800"/></center>
