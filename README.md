@@ -75,7 +75,7 @@ sbatch ../scripts/interproscan.sh ../Fragaria_vesca_v4.0.a2.proteins.fa
 
 ## Citation
 
-Esther Rosales Sanchez, **R. Jordan Price**, Federico Marangelli et al. Overexpression of Vitis GRF4-GIF1 improves regeneration efficiency in diploid *Fragaria vesca* Hawaii 4, 02 July 2024, [Preprint available at Research Square](https://doi.org/10.21203/rs.3.rs-4583627/v1)
+Sanchez, E.R., **Price, R.J.**, Marangelli, F. et al. [Overexpression of Vitis GRF4-GIF1 improves regeneration efficiency in diploid Fragaria vesca Hawaii 4.](https://doi.org/10.1186/s13007-024-01270-8) Plant Methods 20, 160 (2024). 
 
 <br>
 
